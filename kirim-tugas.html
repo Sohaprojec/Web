@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<?php
+session_start();
+
+// Periksa apakah sesi pengguna telah terautentikasi
+if (!isset($_SESSION['user_id'])) {
+    header("Location: login.php");
+    exit();
+}
+?>
+
+<html>
+<head>
+    <title>Kirim Tugas</title>
+    <link rel="stylesheet" type="text/css" href="style.css">
+</head>
+<body>
+    <header>
+        <h1>Kirim Tugas</h1>
+    </header>
+    <nav>
+        <ul>
+            <li><a href="index.html">Beranda</a></li>
+            <li><a href="tugas.html">Penerimaan Tugas</a></li>
+            <li><a href="kirim-tugas.html">Kirim Tugas</a></li>
+        </ul>
+    </nav>
+    <section>
+        <h2>Form Pengiriman Tugas</h2>
+        <form id="uploadForm" action="upload_tugas.php" method="post" enctype="multipart/form-data" onsubmit="return validateForm()">
+            <label for="nama">Nama:</label>
+            <input type="text" id="nama" name="nama" required><br>
+            <label for="tugas">Pilih tugas (PDF, DOC, DOCX, atau TXT):</label>
+            <input type="file" id="tugas" name="tugas" accept=".pdf, .doc, .docx, .txt" required><br>
+            <input type="submit" value="Kirim Tugas">
+        </form>
+    </section>
+    <footer>
+        <p>Hak Cipta &copy; 2023 Kirim Tugas.</p>
+    </footer>
+    <script>
+        function validateForm() {
+            // Validasi nama tidak boleh kosong
+            var namaInput = document.getElementById("nama");
+            if (namaInput.value.trim() === "") {
+                alert("Mohon masukkan nama Anda.");
+                namaInput.focus();
+                return false;
+            }
+
+            // Validasi jenis file tugas yang diunggah
+            var tugasInput = document.getElementById("tugas");
+            var allowedTypes = [".pdf", ".doc", ".docx", ".txt"];
+            var fileType = tugasInput.value.substring(tugasInput.value.lastIndexOf(".")).toLowerCase();
+            if (!allowedTypes.includes(fileType)) {
+                alert("Tipe file yang diunggah tidak diizinkan. Harap unggah file PDF, DOC, DOCX, atau TXT.");
+                tugasInput.value = ""; // Reset input file
+                tugasInput.focus();
+                return false;
+            }
+
+            // Validasi ukuran file tugas yang diunggah (maksimal 5 MB)
+            var maxSize = 5 * 1024 * 1024; // 5 MB dalam bytes
+            if (tugasInput.files[0].size > maxSize) {
+                alert("Ukuran file terlalu besar. Maksimal ukuran file yang diizinkan adalah 5 MB.");
+                tugasInput.value = ""; // Reset input file
+                tugasInput.focus();
+                return false;
+            }
+
+            return true;
+        }
+    </script>
+</body>
+</html>
